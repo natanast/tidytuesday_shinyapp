@@ -1,20 +1,40 @@
-
-
 library(shiny)
+library(jsonlite)
+library(httr)
 
-# Define the GitHub raw content base URL
+# GitHub API URL to fetch all years
 github_base_url <- "https://raw.githubusercontent.com/natanast/TidyTuesday/main/"
+github_api_url <- "https://api.github.com/repos/natanast/TidyTuesday/contents/R"
 
-# Manually list available folders containing the `Rplot.png`
-available_folders <- c(
-    "R/2024/2024-05-21",
-    "R/2024/2024-08-06"
-)
+# Function to get available folders (years & subfolders dynamically)
+get_available_folders <- function(api_url) {
+    res <- GET(api_url)
+    
+    if (status_code(res) == 200) {
+        contents <- fromJSON(content(res, as = "text"))
+        years <- contents$name  # Get year folder names (e.g., "2024", "2025")
+        
+        all_folders <- c()
+        for (year in years) {
+            year_url <- paste0(api_url, "/", year)
+            year_res <- GET(year_url)
+            
+            if (status_code(year_res) == 200) {
+                subfolders <- fromJSON(content(year_res, as = "text"))$name  # Extract dataset folder names
+                subfolder_paths <- paste0("R/", year, "/", subfolders, "/Rplot.png")
+                all_folders <- c(all_folders, subfolder_paths)
+            }
+        }
+        return(all_folders)
+    } else {
+        return(NULL)  # Return NULL if API call fails
+    }
+}
 
-# Construct full paths to the `Rplot.png` images
-available_images <- paste0(available_folders, "/Rplot.png")
+# Get all available images dynamically
+available_images <- get_available_folders(github_api_url)
 
-# Front-end interface
+# UI
 ui <- fluidPage(
     titlePanel("TidyTuesday Contributions"),
     sidebarLayout(
@@ -23,26 +43,23 @@ ui <- fluidPage(
                 inputId = "dataset",
                 label = "Select Dataset:",
                 choices = available_images,
-                selected = available_images[1]
+                selected = ifelse(length(available_images) > 0, available_images[1], NULL)
             )
         ),
         mainPanel(
-            uiOutput("image_display") # Dynamically render the selected image
+            uiOutput("image_display")  # Dynamically render the selected image
         )
     )
 )
 
-# Back-end logic
+# Server
 server <- function(input, output, session) {
     # Dynamically render the selected image
     output$image_display <- renderUI({
-        selected_image <- input$dataset
-        # Combine GitHub raw URL base with the selected image path
-        img_src <- paste0(github_base_url, selected_image)
+        req(input$dataset)  # Ensure input is available
+        img_src <- paste0(github_base_url, input$dataset)
         tags$img(src = img_src, alt = "TidyTuesday Contribution", style = "max-width: 100%; height: auto;")
     })
 }
-
-
 
 shinyApp(ui, server)
