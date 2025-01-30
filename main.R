@@ -1,10 +1,13 @@
 library(shiny)
 library(jsonlite)
 library(httr)
+library(bslib)
 
 # GitHub API URL to fetch all years
 github_base_url <- "https://raw.githubusercontent.com/natanast/TidyTuesday/main/"
 github_api_url <- "https://api.github.com/repos/natanast/TidyTuesday/contents/R"
+
+
 
 # Function to get available folders (years & subfolders dynamically)
 get_available_folders <- function(api_url) {
@@ -34,23 +37,40 @@ get_available_folders <- function(api_url) {
 # Get all available images dynamically
 available_images <- get_available_folders(github_api_url)
 
+
+
 # UI
-ui <- fluidPage(
-    titlePanel("TidyTuesday Contributions"),
-    sidebarLayout(
-        sidebarPanel(
-            selectInput(
-                inputId = "dataset",
-                label = "Select Dataset:",
-                choices = available_images,
-                selected = ifelse(length(available_images) > 0, available_images[1], NULL)
-            )
-        ),
-        mainPanel(
-            uiOutput("image_display")  # Dynamically render the selected image
+ui <- page_sidebar(
+    title = h3("📊 TidyTuesday Contributions", style = "color: #F3F6FA; margin-bottom: 5px;"),
+    
+    sidebar = sidebar(
+        selectInput(
+            inputId = "dataset",
+            label = "Select Dataset:",
+            choices = available_images,
+            selected = ifelse(length(available_images) > 0, available_images[1], NULL)
         )
+    ),
+    
+    navset_underline(
+        nav_panel(
+            title = tags$h6("Plot", style = "color: #004164; margin-bottom: 5px;"),
+            fluidPage(
+                br(),
+                uiOutput("image_display")  # Dynamically render the selected image
+            )
+        )
+    ),
+    
+    theme = bs_theme(
+        preset = "cerulean",
+        bg = "#F3F6FA",
+        fg = "#456f82",
+        base_font = font_google("Jost")
     )
 )
+
+
 
 # Server
 server <- function(input, output, session) {
