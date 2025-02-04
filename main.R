@@ -7,8 +7,6 @@ library(bslib)
 github_base_url <- "https://raw.githubusercontent.com/natanast/TidyTuesday/main/"
 github_api_url <- "https://api.github.com/repos/natanast/TidyTuesday/contents/R"
 
-
-
 # Function to get available folders (years & subfolders dynamically)
 get_available_folders <- function(api_url) {
     res <- GET(api_url)
@@ -37,8 +35,6 @@ get_available_folders <- function(api_url) {
 # Get all available images dynamically
 available_images <- get_available_folders(github_api_url)
 
-
-
 # UI
 ui <- page_sidebar(
     title = h3("📊 TidyTuesday Contributions", style = "color: #F3F6FA; margin-bottom: 5px;"),
@@ -57,7 +53,13 @@ ui <- page_sidebar(
             title = tags$h6("Plot", style = "color: #004164; margin-bottom: 5px;"),
             fluidPage(
                 br(),
-                uiOutput("image_display")  # Dynamically render the selected image
+                div(style = "display: flex; justify-content: center;",  # Center card
+                    card(
+                        full_screen = FALSE, fill = FALSE,
+                        style = "width: 600px; padding: 10px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);",
+                        card_body(uiOutput("image_display"))
+                    )
+                )
             )
         )
     ),
@@ -70,15 +72,14 @@ ui <- page_sidebar(
     )
 )
 
-
-
 # Server
 server <- function(input, output, session) {
     # Dynamically render the selected image
     output$image_display <- renderUI({
         req(input$dataset)  # Ensure input is available
         img_src <- paste0(github_base_url, input$dataset)
-        tags$img(src = img_src, alt = "TidyTuesday Contribution", style = "max-width: 100%; height: auto;")
+        tags$img(src = img_src, alt = "TidyTuesday Contribution", 
+                 style = "max-width: 100%; height: auto; display: block; margin: auto;")
     })
 }
 
