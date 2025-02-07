@@ -37,7 +37,7 @@ available_images <- get_available_folders(github_api_url)
 
 # UI
 ui <- page_sidebar(
-    title = h3("📊 TidyTuesday Contributions", style = "color: #F3F6FA; margin-bottom: 5px;"),
+    title = h1("📊 TidyTuesday Contributions", style = "color: #F3F6FA; margin-bottom: 5px; margin-left: 750px"),
     
     sidebar = sidebar(
         selectInput(
@@ -55,8 +55,8 @@ ui <- page_sidebar(
                 br(),
                 div(style = "display: flex; justify-content: center;",  # Center card
                     card(
-                        full_screen = FALSE, fill = FALSE,
-                        style = "width: 600px; padding: 10px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);",
+                        full_screen = TRUE, fill = FALSE,
+                        style = "width: 1200px; padding: 10px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);",
                         card_body(uiOutput("image_display"))
                     )
                 )
@@ -72,8 +72,10 @@ ui <- page_sidebar(
     )
 )
 
+
 # Server
 server <- function(input, output, session) {
+    
     # Dynamically render the selected image
     output$image_display <- renderUI({
         req(input$dataset)  # Ensure input is available
@@ -81,6 +83,9 @@ server <- function(input, output, session) {
         tags$img(src = img_src, alt = "TidyTuesday Contribution", 
                  style = "max-width: 100%; height: auto; display: block; margin: auto;")
     })
+    
 }
+
+
 
 shinyApp(ui, server)
