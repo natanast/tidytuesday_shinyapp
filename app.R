@@ -25,7 +25,7 @@ get_available_folders <- function(api_url) {
                 subfolders <- fromJSON(content(year_res, as = "text"))$name  # Extract dataset folder names
                 
                 for (subfolder in subfolders) {
-                    path <- paste0("R/", year, "/", subfolder, "/Rplot.png")
+                    path <- paste0("R/", year, "/", subfolder, "/plot.png")
                     all_folders <- c(all_folders, path)
                     all_dates <- c(all_dates, subfolder)  # Extract just the date part
                 }
@@ -44,7 +44,8 @@ available_images <- get_available_folders(github_api_url)
 
 # UI
 ui <- page_sidebar(
-    title = div(h3("📊 TidyTuesday Contributions", style = "color: #F3F6FA; text-align: center;")),
+    title = div(h3("📊 TidyTuesday Contributions", style = "color: #ededed; text-align: center; 
+                   margin-bottom: 1px; margin-top: 1px; font-size: 35px;")),
     
     sidebar = sidebar(
         selectInput(
@@ -59,7 +60,7 @@ ui <- page_sidebar(
         
         # About 
         nav_panel(
-            title = tags$h5("About", style = "color: #004164; margin-bottom: 5px;"),
+            title = tags$h5("About", style = "color: #456f82; margin-bottom: 5px;"),
             fluidPage(
                 br(),
                 div(style = "max-width: 1000px; margin: auto;", 
@@ -67,14 +68,17 @@ ui <- page_sidebar(
                         full_screen = FALSE, fill = TRUE,
                         style = "padding: 20px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);",
                         card_body(
-                            h4("About This App"),
-                            p("This Shiny app displays my contributions to the TidyTuesday project."),
-                            p("Use the dropdown menu to select a dataset and view the corresponding visualization."),
-                            p("All images are fetched dynamically from my GitHub repository."),
+                            h4("About This App", style = "font-size: 26px; font-weight: bold; color: #456f82"),
+                            p("This Shiny app displays my contributions to the TidyTuesday project.", style = "font-size: 22px;"),
+                            p("Use the dropdown menu to select a dataset and view the corresponding visualization at the Plot tab.", style = "font-size: 22px;"),
+                            p("All images are fetched dynamically from my GitHub repository.", style = "font-size: 22px;"),
                             hr(),
-                            h5("📌 TidyTuesday"),
-                            p("TidyTuesday is a weekly data visualization challenge where participants analyze and visualize publicly available datasets."),
-                            a("Learn more about TidyTuesday", href = "https://github.com/rfordatascience/tidytuesday", target = "_blank", style = "color: #004164; text-decoration: none; font-weight: bold;")
+                            h5("📌 TidyTuesday", style = "font-size: 26px; font-weight: bold; color: #456f82"),
+                            p("TidyTuesday is a weekly data visualization challenge where participants analyze and visualize publicly available datasets.", style = "font-size: 22px;"),
+                            a("Learn more about TidyTuesday", 
+                              href = "https://github.com/rfordatascience/tidytuesday", 
+                              target = "_blank", 
+                              style = "font-size: 20px; color: #456f82; text-decoration: none;")
                         )
                     )
                 )
@@ -83,7 +87,7 @@ ui <- page_sidebar(
         
         # Plot 
         nav_panel(
-            title = tags$h5("Plot", style = "color: #004164; margin-bottom: 5px;"),
+            title = tags$h5("Plot", style = "color: #456f82; margin-bottom: 5px;"),
             fluidPage(
                 br(),
                 div(style = "display: flex; justify-content: center;",  # Center card
@@ -101,7 +105,7 @@ ui <- page_sidebar(
     
     theme = bs_theme(
         preset = "cerulean",
-        bg = "#F3F6FA",
+        bg = "#f1f1f1",
         fg = "#456f82",
         base_font = font_google("Jost")
     )
