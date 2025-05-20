@@ -5,6 +5,6 @@ account: nanastas
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 13935623
-bundleId: 10297971
+bundleId: 10311417
 url: https://nanastas.shinyapps.io/tidytuesday_shinyapp/
 version: 1
