@@ -5,7 +5,7 @@ library(bslib)
 
 # GitHub API URLs
 github_base_url <- "https://raw.githubusercontent.com/natanast/TidyTuesday/main/"
-github_api_url <- "https://api.github.com/repos/natanast/TidyTuesday/contents/R"
+github_api_url <- "https://api.github.com/repos/natanast/TidyTuesday/contents/Code"
 
 # Function to get available folders (years & subfolders dynamically)
 get_available_folders <- function(api_url) {
@@ -25,7 +25,7 @@ get_available_folders <- function(api_url) {
                 subfolders <- fromJSON(content(year_res, as = "text"))$name  # Extract dataset folder names
                 
                 for (subfolder in subfolders) {
-                    path <- paste0("R/", year, "/", subfolder, "/plot.png")
+                    path <- paste0("Code/", year, "/", subfolder, "/plot.png")
                     all_folders <- c(all_folders, path)
                     all_dates <- c(all_dates, subfolder)  # Extract just the date part
                 }
